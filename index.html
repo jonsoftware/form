@@ -1,0 +1,46 @@
+<html>
+
+<head>
+
+<title>form</title>
+
+<link rel="stylesheet" href="style.css">
+
+</head>
+
+<body>
+
+<form action="/my-handling-form-page" method="post">
+  
+  <div>
+    <label for="name">Name:</label>
+    <input type="text" id="name" name="user_name" />
+  </div>
+
+  <div>
+    <label for="mail">Email:</label>
+    <input type="email" id="mail" name="user_email" />
+  </div>
+
+  <div>
+    <label for="msg">Message:</label>
+    <textarea id="msg" name="user_message"></textarea>
+  </div>
+
+  <div class="button">
+    <button type="submit">Send your message</button>
+  </div>
+  
+  <div>
+  <input type ="hidden" name="mail" value="jonas.ananias21@gmail.com">
+  </div>
+  
+ <div id="clear">
+  <input type="reset" value="to clear">
+  </div>
+
+</form>
+<script src="script.js"></script>
+</body>
+
+</html>
