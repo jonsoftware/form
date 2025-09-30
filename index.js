@@ -1,5 +1,3 @@
-
-
 /**
  * 🚀 APLICATIVO HÍBRIDO - ARQUIVO PRINCIPAL
  * =========================================
