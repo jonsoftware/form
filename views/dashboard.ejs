@@ -1,0 +1,291 @@
+<link rel="stylesheet" href="/css/dashboard.css">
+
+<div class="dashboard-header">
+    <h1>📊 Dashboard de Tarefas</h1>
+    <p>Visualize as estatísticas e progresso das suas tarefas</p>
+</div>
+
+<div class="dashboard-grid">
+    <!-- COLUNA PRINCIPAL -->
+    <div>
+        <!-- CARDS DE ESTATÍSTICAS -->
+        <div class="stats-grid">
+            <div class="stat-card">
+                <span class="stat-label">Total de Tarefas</span>
+                <span class="stat-number" id="total-tasks">0</span>
+                <p>Todas as tarefas criadas</p>
+            </div>
+
+            <div class="stat-card concluidas">
+                <span class="stat-label">Tarefas Concluídas</span>
+                <span class="stat-number" id="completed-tasks">0</span>
+                <p>Tarefas finalizadas</p>
+            </div>
+
+            <div class="stat-card pendentes">
+                <span class="stat-label">Tarefas Pendentes</span>
+                <span class="stat-number" id="pending-tasks">0</span>
+                <p>Tarefas em aberto</p>
+            </div>
+
+            <div class="stat-card percentual">
+                <span class="stat-label">Percentual de Conclusão</span>
+                <span class="stat-number" id="completion-percent">0%</span>
+                <p>Progresso geral</p>
+            </div>
+        </div>
+
+        <!-- GRÁFICO DE PROGRESSO -->
+        <div class="progress-chart">
+            <h3>📈 Progresso das Tarefas</h3>
+            <div class="chart-container">
+                <div class="chart-visual">
+                    <div class="progress-circle" id="progress-circle">
+                        <span class="progress-text">0%</span>
+                    </div>
+                </div>
+                <div class="chart-info">
+                    <h4>Distribuição</h4>
+                    <div class="chart-bars">
+                        <div class="chart-bar concluidas" id="bar-completed" style="height: 0%">
+                            <span class="chart-bar-label">Concluídas</span>
+                        </div>
+                        <div class="chart-bar pendentes" id="bar-pending" style="height: 0%">
+                            <span class="chart-bar-label">Pendentes</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- FILTROS -->
+    <div class="filters-section">
+        <h3>🔍 Filtros</h3>
+        <div class="filters-grid">
+            <button class="filter-btn active" onclick="dashboard.filtrarTarefas('todas')">Todas</button>
+            <button class="filter-btn" onclick="dashboard.filtrarTarefas('pendentes')">Pendentes</button>
+            <button class="filter-btn" onclick="dashboard.filtrarTarefas('concluidas')">Concluídas</button>
+            <button class="filter-btn" onclick="dashboard.filtrarTarefas('alta')">Prioridade Alta</button>
+            <button class="filter-btn" onclick="dashboard.filtrarTarefas('media')">Prioridade Média</button>
+            <button class="filter-btn" onclick="dashboard.filtrarTarefas('baixa')">Prioridade Baixa</button>
+        </div>
+    </div>
+
+    <!-- COLUNA LATERAL -->
+    <div>
+        <!-- TAREFAS RECENTES -->
+        <div class="recent-tasks">
+            <h3>🕒 Últimas Tarefas</h3>
+            <p>As 5 tarefas mais recentes</p>
+
+            <ul class="task-list" id="recent-tasks-list">
+                <li class="task-item">
+                    <div class="task-status pendente"></div>
+                    <div class="task-info">
+                        <div class="task-title">Carregando...</div>
+                        <div class="task-meta">Prioridade: <span class="task-priority priority-media">Média</span></div>
+                    </div>
+                </li>
+            </ul>
+        </div>
+    </div>
+</div>
+
+<!-- BOTÕES DE AÇÃO -->
+<div class="action-buttons">
+    <a href="/tarefas" class="btn-dashboard">📋 Gerenciar Tarefas</a>
+    <a href="/" class="btn-dashboard btn-secondary">🏠 Página Inicial</a>
+    <button class="btn-dashboard" onclick="dashboard.atualizarDashboard()">🔄 Atualizar</button>
+</div>
+
+<script>
+    class Dashboard {
+        constructor() {
+            this.tarefas = [];
+            console.log('📊 Dashboard inicializado');
+            this.carregarDados();
+        }
+
+        async carregarDados() {
+            try {
+                console.log('📥 Carregando dados do dashboard...');
+
+                const response = await fetch('/api/tarefas');
+
+                if (!response.ok) {
+                    throw new Error(`Erro HTTP: ${response.status}`);
+                }
+
+                const result = await response.json();
+
+                if (result.success) {
+                    this.tarefas = result.data || [];
+                    console.log(`📋 ${this.tarefas.length} tarefas carregadas para dashboard`);
+                    this.atualizarEstatisticas();
+                    this.atualizarTarefasRecentes();
+                    this.atualizarGrafico();
+                } else {
+                    throw new Error(result.error || 'Erro ao carregar tarefas');
+                }
+            } catch (error) {
+                console.error('💥 Erro ao carregar dashboard:', error);
+                this.mostrarErro();
+            }
+        }
+
+        atualizarEstatisticas() {
+            const total = this.tarefas.length;
+            const concluidas = this.tarefas.filter(t => t.concluida).length;
+            const pendentes = total - concluidas;
+            const percentual = total > 0 ? Math.round((concluidas / total) * 100) : 0;
+
+            document.getElementById('total-tasks').textContent = total;
+            document.getElementById('completed-tasks').textContent = concluidas;
+            document.getElementById('pending-tasks').textContent = pendentes;
+            document.getElementById('completion-percent').textContent = percentual + '%';
+
+            console.log(`📊 Estatísticas: Total=${total}, Concluídas=${concluidas}, Pendentes=${pendentes}, Percentual=${percentual}%`);
+        }
+
+        filtrarTarefas(filtro) {
+    // Remove classe active de todos os botões
+    document.querySelectorAll('.filter-btn').forEach(btn => {
+        btn.classList.remove('active');
+    });
+    
+    // Adiciona classe active ao botão clicado
+    event.target.classList.add('active');
+    
+    let tarefasFiltradas = [];
+    
+    switch(filtro) {
+        case 'pendentes':
+            tarefasFiltradas = this.tarefas.filter(t => !t.concluida);
+            break;
+        case 'concluidas':
+            tarefasFiltradas = this.tarefas.filter(t => t.concluida);
+            break;
+        case 'alta':
+            tarefasFiltradas = this.tarefas.filter(t => t.prioridade === 'alta');
+            break;
+        case 'media':
+            tarefasFiltradas = this.tarefas.filter(t => t.prioridade === 'media');
+            break;
+        case 'baixa':
+            tarefasFiltradas = this.tarefas.filter(t => t.prioridade === 'baixa');
+            break;
+        default:
+            tarefasFiltradas = this.tarefas;
+    }
+    
+    this.atualizarTarefasRecentes(tarefasFiltradas);
+}
+
+atualizarTarefasRecentes(tarefas = null) {
+    const container = document.getElementById('recent-tasks-list');
+    if (!container) return;
+
+    const tarefasParaMostrar = tarefas || this.tarefas;
+    const recentes = [...tarefasParaMostrar]
+        .sort((a, b) => b.id - a.id)
+        .slice(0, 5);
+
+    if (recentes.length === 0) {
+        container.innerHTML = `
+            <li class="task-item">
+                <div class="task-status pendente"></div>
+                <div class="task-info">
+                    <div class="task-title">Nenhuma tarefa encontrada</div>
+                    <div class="task-meta">Crie sua primeira tarefa</div>
+                </div>
+            </li>
+        `;
+        return;
+    }
+
+    let html = '';
+    recentes.forEach(tarefa => {
+        const statusClasse = tarefa.concluida ? 'concluida' : 'pendente';
+        const statusTexto = tarefa.concluida ? 'Concluída' : 'Pendente';
+        const prioridadeTexto = tarefa.prioridade === 'alta' ? 'Alta' : 
+                              tarefa.prioridade === 'media' ? 'Média' : 'Baixa';
+        const prioridadeClasse = `priority-${tarefa.prioridade || 'media'}`;
+
+        html += `
+            <li class="task-item">
+                <div class="task-status ${statusClasse}"></div>
+                <div class="task-info">
+                    <div class="task-title">${tarefa.titulo}</div>
+                    <div class="task-meta">
+                        Status: ${statusTexto} | 
+                        Prioridade: <span class="task-priority ${prioridadeClasse}">${prioridadeTexto}</span>
+                    </div>
+                </div>
+            </li>
+        `;
+    });
+
+    container.innerHTML = html;
+}
+        atualizarGrafico() {
+            const total = this.tarefas.length;
+            const concluidas = this.tarefas.filter(t => t.concluida).length;
+            const pendentes = total - concluidas;
+            const percentual = total > 0 ? Math.round((concluidas / total) * 100) : 0;
+
+            const progressCircle = document.getElementById('progress-circle');
+            progressCircle.style.background = `conic-gradient(#28a745 0% ${percentual}%, #e9ecef ${percentual}% 100%)`;
+            progressCircle.querySelector('.progress-text').textContent = percentual + '%';
+
+            const barCompleted = document.getElementById('bar-completed');
+            const barPending = document.getElementById('bar-pending');
+
+            const alturaConcluidas = total > 0 ? (concluidas / total) * 100 : 0;
+            const alturaPendentes = total > 0 ? (pendentes / total) * 100 : 0;
+
+            barCompleted.style.height = alturaConcluidas + '%';
+            barPending.style.height = alturaPendentes + '%';
+
+            console.log(`📈 Gráfico atualizado: ${percentual}% concluído`);
+        }
+        async atualizarDashboard(e) {
+    if (e) e.preventDefault(); // Previne comportamento padrão se for evento
+    
+    console.log('🔄 Atualizando dashboard...');
+    await this.carregarDados();
+    
+    const btn = e ? e.target : document.querySelector('.btn-dashboard[onclick*="atualizarDashboard"]');
+    const originalText = btn.textContent;
+    btn.textContent = '✅ Atualizado!';
+    btn.disabled = true;
+    
+    setTimeout(() => {
+        btn.textContent = originalText;
+        btn.disabled = false;
+    }, 2000);
+}
+        mostrarErro() {
+            const container = document.getElementById('recent-tasks-list');
+            if (container) {
+                container.innerHTML = `
+                <li class="task-item">
+                    <div class="task-status pendente"></div>
+                    <div class="task-info">
+                        <div class="task-title">Erro ao carregar dados</div>
+                        <div class="task-meta">Tente atualizar a página</div>
+                    </div>
+                </li>
+            `;
+            }
+        }
+    }
+
+    let dashboard;
+    document.addEventListener('DOMContentLoaded', () => {
+        console.log('🏁 DOM carregado, inicializando dashboard...');
+        dashboard = new Dashboard();
+    });
+
+    window.dashboard = dashboard;
+</script>

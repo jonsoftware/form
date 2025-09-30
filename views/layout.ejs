@@ -1,0 +1,86 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title><%= title %> - Aplicativo Híbrido</title>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="/css/style.css">
+
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>🚀 Aplicativo Híbrido</h1>
+            <p><%= description %></p>
+        </div>
+        
+        <nav class="nav">
+            <ul>
+                <li><a href="/"><i class="fas fa-home"></i> Início</a></li>
+                <li><a href="/sobre"><i class="fas fa-info-circle"></i> Sobre</a></li>
+                <li><a href="/tarefas"><i class="fas fa-tasks"></i> Tarefas</a></li>
+                <li><a href="/contato"><i class="fas fa-envelope"></i> Contato</a></li>
+                <li><a href="/api/status"><i class="fas fa-chart-line"></i> API Status</a></li>
+                <li><a href="/dashboard"><i class="fas fa-chart-bar"></i> Dashboard</a></li>
+            </ul>
+        </nav>
+        
+        <main class="content">
+            <%- body %>
+        </main>
+        
+        <div class="footer">
+            <p><i class="fas fa-rocket"></i> Aplicativo Híbrido - Aula 1 | Desenvolvido para fins educacionais</p>
+            <p style="font-size: 0.9rem; margin-top: 10px; opacity: 0.7;">
+                <i class="fas fa-clock"></i> Sistema rodando desde <%= new Date().toLocaleString('pt-BR') %>
+            </p>
+        </div>
+    </div>
+
+    <script>
+        // Add smooth scrolling and interactive effects
+        document.addEventListener('DOMContentLoaded', function() {
+            // Add loading states to buttons
+            const buttons = document.querySelectorAll('.btn');
+            buttons.forEach(btn => {
+                btn.addEventListener('click', function() {
+                    if (this.href && !this.href.includes('#')) {
+                        this.innerHTML = '<span class="loading"></span> Carregando...';
+                        this.style.pointerEvents = 'none';
+                    }
+                });
+            });
+
+            // Add parallax effect to background
+            window.addEventListener('scroll', function() {
+                const scrolled = window.pageYOffset;
+                const parallax = document.querySelector('body::before');
+                if (parallax) {
+                    parallax.style.transform = `translateY(${scrolled * 0.5}px)`;
+                }
+            });
+
+            // Add entrance animations
+            const cards = document.querySelectorAll('.card');
+            const observer = new IntersectionObserver((entries) => {
+                entries.forEach(entry => {
+                    if (entry.isIntersecting) {
+                        entry.target.style.opacity = '1';
+                        entry.target.style.transform = 'translateY(0)';
+                    }
+                });
+            });
+
+            cards.forEach(card => {
+                card.style.opacity = '0';
+                card.style.transform = 'translateY(20px)';
+                card.style.transition = 'opacity 0.6s ease, transform 0.6s ease';
+                observer.observe(card);
+            });
+        });
+    </script>
+</body>
+</html>
+

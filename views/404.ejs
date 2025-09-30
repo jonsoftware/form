@@ -1,0 +1,42 @@
+<link rel="stylesheet" href="/css/404.css">
+<div class="card">
+    <h1>404</h1>
+    <h2>Página não encontrada</h2>
+    <p><%= description %></p>
+    
+    <div class="url-container">
+        <h3>🔍 URL solicitada:</h3>
+        <code><%= requestedUrl %></code>
+    </div>
+    
+    <div class="pages-section">
+        <h3>🚀 Páginas disponíveis:</h3>
+        <div class="pages-grid">
+            <a href="/" class="page-link">
+                <h4>🏠 Início</h4>
+                <p>Página principal</p>
+            </a>
+            <a href="/sobre" class="page-link">
+                <h4>ℹ️ Sobre</h4>
+                <p>Informações do projeto</p>
+            </a>
+            <a href="/tarefas" class="page-link">
+                <h4>📋 Tarefas</h4>
+                <p>Gerenciar tarefas</p>
+            </a>
+            <a href="/dashboard" class="page-link">
+                <h4>📊 Dashboard</h4>
+                <p>Estatísticas e gráficos</p>
+            </a>
+            <a href="/contato" class="page-link">
+                <h4>📞 Contato</h4>
+                <p>Informações de contato</p>
+            </a>
+        </div>
+    </div>
+    
+    <div class="buttons-container">
+        <a href="/" class="btn">🏠 Voltar ao Início</a>
+        <a href="javascript:history.back()" class="btn">⬅️ Voltar</a>
+    </div>
+</div>

@@ -1,0 +1,81 @@
+﻿# Windows
+Thumbs.db
+Desktop.ini
+*.lnk
+*.tmp
+*.log
+
+# Diretórios do sistema
+AppData/
+Contacts/
+Documents/
+Desktop/
+Favorites/
+Links/
+Music/
+Pictures/
+Saved Games/
+Searches/
+Videos/
+MicrosoftEdgeBackups/
+WPS Cloud Files/
+3D Objects/
+
+# Node.js
+node_modules/
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+.npm
+.node_repl_history
+
+# IDEs e editores
+.vscode/
+.idea/
+*.swp
+*.swo
+*.swn
+*.swm
+
+# Configurações do sistema
+NTUSER.DAT*
+ntuser.dat*
+ntuser.ini
+
+# Cache e temporários
+.cache/
+.parcel-cache/
+.temp/
+*.bak
+*.backup
+.DS_Store
+
+# Logs
+logs/
+*.log
+
+# Dependências
+jspm_packages/
+
+# Ambiente
+.env
+.env.local
+.env.production
+
+# Build
+dist/
+build/
+.out/
+.next/
+
+# Usuário específico
+.bash_history
+.lesshst
+.ipython/
+.idlerc/
+.dotnet/
+.nuget/
+.portugol/
+.rfb/
+.templateengine/
+.dbclient/
